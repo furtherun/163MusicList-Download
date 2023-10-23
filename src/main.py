@@ -28,6 +28,7 @@ class MyFrame1 (threading.Thread, wx.Frame):
         bSizerInfo = wx.BoxSizer(wx.VERTICAL)
         bSizerUrl = wx.BoxSizer(wx.HORIZONTAL)
         bSizerDir = wx.BoxSizer(wx.HORIZONTAL)
+        # bSizerCheck = wx.BoxSizer(wx.HORIZONTAL)
 
         """
         url boxSizer
@@ -126,6 +127,14 @@ class MyFrame1 (threading.Thread, wx.Frame):
         #     self, wx.ID_ANY, u"重新启动", wx.DefaultPosition, wx.DefaultSize, 0)
         # bSizerBase.Add(self.restart_button, 0, wx.ALL, 5)
 
+        """
+        check box
+        """
+        self.use_trck = wx.CheckBox(self, label='命名添加音轨号前缀')
+        bSizerBase.Add(self.use_trck, 0, wx.ALL, 5)
+        self.auto_subdir = wx.CheckBox(self, label='自动创建子目录')
+        bSizerBase.Add(self.auto_subdir, 0, wx.ALL, 5)
+
         bSizerBase.Add(self.output_text, 0, wx.ALL, 5)
 
         self.SetSizer(bSizerBase)
@@ -140,6 +149,8 @@ class MyFrame1 (threading.Thread, wx.Frame):
             wx.EVT_BUTTON, lambda event: self.downloadMusic(event, True))
         self.dir_button.Bind(wx.EVT_BUTTON, self.selectSaveDir)
         self.restart_button.Bind(wx.EVT_BUTTON, self.restart)
+        self.use_trck.Bind(wx.EVT_CHECKBOX, self.use_trck_checked)
+        self.auto_subdir.Bind(wx.EVT_CHECKBOX, self.auto_subdir_checked)
 
         # 多线程
         threading.Thread.__init__(self)
@@ -198,6 +209,13 @@ class MyFrame1 (threading.Thread, wx.Frame):
             trck_num += 1
 
             save_dir = self.getSaveDir()
+
+            if self.auto_subdir.GetValue():
+                if len(music_artist) != 0:
+                    save_dir = save_dir + '\\' + music_album[0] + '\\'
+                else:
+                    save_dir = save_dir + '\\' + music_id + '\\'
+
             if not os.path.exists(save_dir):
                 try:
                     os.makedirs(save_dir)
@@ -211,6 +229,9 @@ class MyFrame1 (threading.Thread, wx.Frame):
                     music_title + ' - ' + ', '.join(music_artist) + '.mp3'
             else:
                 music_file = save_dir + music_title + '.mp3'
+
+            if self.use_trck.GetValue():
+                music_file = save_dir + str(trck_num) + ' ' + music_file
 
             # print(music_file)
 
@@ -402,6 +423,17 @@ class MyFrame1 (threading.Thread, wx.Frame):
         with open(path, 'wb') as f:
             f.write(response.content)
             f.flush()
+
+    def use_trck_checked(self, event) -> bool:
+        # if self.use_trck.GetValue():
+        #     self.output_text.AppendText(u"\n 记录专辑中的音轨号 \n")
+        # else:
+        #     self.output_text.AppendText(u"\n 不记录专辑中的音轨号 \n")
+
+        return self.use_trck.GetValue()
+
+    def auto_subdir_checked(self, event) -> bool:
+        return self.auto_subdir.GetValue()
 
 
 def main():
