@@ -185,6 +185,7 @@ class MyFrame1 (threading.Thread, wx.Frame):
         succ_num = 0
         fail_num = 0
         skip_num = 0
+        trck_num = 0
 
         rstr = r"[\/\\\:\*\?\"\<\>\|]"  # '/ \ : * ? " < > |'
         for x in musicData:
@@ -194,6 +195,7 @@ class MyFrame1 (threading.Thread, wx.Frame):
             music_title = x['title']
             music_artist = x.get('artist', [])
             music_album = x.get('album', [])
+            trck_num += 1
 
             save_dir = self.getSaveDir()
             if not os.path.exists(save_dir):
@@ -238,6 +240,7 @@ class MyFrame1 (threading.Thread, wx.Frame):
                     audio['title'] = music_title
                     audio['artist'] = music_artist
                     audio['album'] = music_album
+                    audio['tracknumber'] = str(trck_num)
                     audio.save()
                 except:
                     self.output_text.AppendText(
