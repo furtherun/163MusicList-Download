@@ -8,6 +8,6 @@ mkdir dist
 mkdir build
 
 REM 打包应用程序
-pyinstaller -F -w -n 163musicdownload .\src\main.py 
+pyinstaller -F -w -n 163musicdownload-v.0.0.2 .\src\main.py 
 
 pause 
